@@ -37,7 +37,7 @@ flowchart LR
 
 ## 当前仓库代码
 
-仓库中的 `cpp-microservice-scaffold` 提供 C++17 基础封装和对应实验：
+仓库保留两个原有目录：`cpp-microservice-scaffold` 提供 C++17 基础封装和对应实验，`ai-model-acess-tech` 提供 AI 模型接入 SDK 源码。
 
 ```text
 cpp-microservice-scaffold/
@@ -49,9 +49,16 @@ cpp-microservice-scaffold/
     ├── jsoncpp/          # JSON 封装实验
     ├── rpc/              # Channel 管理实验
     └── log_test.cc       # 日志实验
+
+ai-model-acess-tech/
+├── LICENSE
+└── AIModelAcessTech/sdk/
+    ├── CMakeLists.txt
+    ├── include/          # 模型接口、会话和数据管理声明
+    └── src/              # 模型适配器及 SDK 实现
 ```
 
-这些基础封装是业务服务的底层代码；上文描述的是完整平台的交付形态，业务服务源码不在当前提交中。
+这些基础封装和 SDK 是业务服务的底层代码；上文描述的是完整平台的交付形态，业务服务源码不在当前提交中。`ai-model-acess-tech` 保留其原有 `LICENSE`，使用或再分发该目录代码时须遵守该许可证。
 
 ## 编译基础实验
 
