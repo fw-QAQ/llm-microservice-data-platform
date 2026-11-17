@@ -6,7 +6,7 @@ LDLIBS = -lbrpc -lleveldb -lgflags -lssl -lcrypto -lprotobuf -lz -ldl -lgtest -p
 
 all: channels_test
 
-channels_test: channels_test.cc ../../source/rpc.cc
+channels_test: channels_test.cc svc_channels_test.cc ../../source/rpc.cc
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDLIBS)
 
 clean:

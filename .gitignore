@@ -14,3 +14,7 @@ compile_commands.json
 /cpp-microservice-scaffold/test/log_test
 /cpp-microservice-scaffold/test/jsoncpp/json_test
 /cpp-microservice-scaffold/test/rpc/channels_test
+/cpp-microservice-scaffold/test/etcd/registry
+/cpp-microservice-scaffold/test/etcd/discovery
+/cpp-microservice-scaffold/test/fdfs/test
+/cpp-microservice-scaffold/test/util/string_test

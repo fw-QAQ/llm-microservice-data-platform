@@ -44,10 +44,16 @@ cpp-microservice-scaffold/
 ├── source/
 │   ├── json_util.{h,cc}  # JSON 序列化与反序列化
 │   ├── log.{h,cc}        # 日志初始化
-│   └── rpc.{h,cc}        # brpc Channel 节点管理与轮询选择
+│   ├── rpc.{h,cc}        # brpc Channel 管理、回调与服务端工厂
+│   ├── etcd.{h,cc}       # 服务注册与发现
+│   ├── fdfs.{h,cc}       # FastDFS 初始化与上传封装
+│   └── util.{h,cc}       # 字符串与随机标识工具
 └── test/
+    ├── etcd/             # 注册与发现示例
+    ├── fdfs/             # 文件上传示例
     ├── jsoncpp/          # JSON 封装实验
     ├── rpc/              # Channel 管理实验
+    ├── util/             # 字符串工具实验
     └── log_test.cc       # 日志实验
 
 ai-model-acess-tech/
@@ -58,7 +64,7 @@ ai-model-acess-tech/
     └── src/              # 模型适配器及 SDK 实现
 ```
 
-这些基础封装和 SDK 是业务服务的底层代码；上文描述的是完整平台的交付形态，业务服务源码不在当前提交中。`ai-model-acess-tech` 保留其原有 `LICENSE`，使用或再分发该目录代码时须遵守该许可证。
+这些基础封装和 SDK 是业务服务的底层代码；上文描述的是完整平台的交付形态，业务服务源码不在当前提交中。FastDFS 下载和删除接口目前只有声明。`ai-model-acess-tech` 保留其原有 `LICENSE`，使用或再分发该目录代码时须遵守该许可证。
 
 ## 编译基础实验
 
@@ -72,4 +78,4 @@ cd rpc
 make channels_test
 ```
 
-依赖包括 brpc、protobuf、gflags、spdlog、jsoncpp、fmt 和 GoogleTest；具体链接参数见各实验目录的 `makefile`。
+依赖包括 brpc、protobuf、gflags、spdlog、jsoncpp、fmt、GoogleTest、etcd-cpp-api 和 FastDFS；具体链接参数见各实验目录的 `makefile`。Etcd 与 FastDFS 示例运行时还需要对应服务。
