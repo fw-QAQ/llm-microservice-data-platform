@@ -1,29 +1,22 @@
 #pragma once
 
-#include <iostream>
 #include <string>
 #include <vector>
 #include <optional>
-
-extern "C"
-{
-#include <fastdfs/fdfs_client.h>
-#include <fastcommon/logger.h>
-}
 namespace bitefdfs
 {
 
 struct fdfs_settings
 {
-    std::vector<std::string> trackers;
+    std::vector<std::string> trackers;// Tracker 服务器列表
 
-    int connect_timeout = 30;
+    int connect_timeout = 30;//连接超时时间
 
-    int network_timeout = 30;
+    int network_timeout = 30;// 网络超时时间（秒）
 
-    bool use_connection_pool = true;
+    bool use_connection_pool = true;//连接池是否开启
 
-    int connection_pool_max_idle_time = 3600;
+    int connection_pool_max_idle_time = 3600;// 连接池最大空闲时间（秒）
 };
 
 class FDFSClient

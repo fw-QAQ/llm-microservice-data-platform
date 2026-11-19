@@ -1,11 +1,14 @@
-
+#include <cstdint>
 #include <iostream>
 #include <optional>
 #include <sstream>
 #include <cstdlib>
+#include <memory>
 
 #include "fdfs.h"
+
 #include <fastcommon/logger.h>
+#include <fastdfs/fdfs_client.h>
 namespace bitefdfs
 {
 
@@ -102,18 +105,16 @@ std::optional<std::string> FDFSClient::upload_from_buff(
 std::optional<std::string> FDFSClient::upload_from_file(
     const std::string& path)
 {
-    // TODO 1：获取 Tracker 连接
-    // 如果连接失败，返回 std::nullopt
+
       ConnectionInfo *tracker_server = tracker_get_connection();
 
   if (tracker_server == nullptr) {
     std::cerr << "[Test] Tracker 连接失败" << std::endl;
      return std::nullopt;
   }
-    // TODO 2：创建 file_id 缓冲区
+
   char file_id[256] = {0};
-    // TODO 3：调用 storage_upload_by_filename1()
-    // 使用 path.c_str() 作为本地文件路径
+
   int ret = storage_upload_by_filename1(
     tracker_server,
     nullptr,
@@ -136,5 +137,133 @@ std::optional<std::string> FDFSClient::upload_from_file(
     }
     return std::string(file_id);
 }
+bool FDFSClient::download_to_buff(
+    const std::string& file_id,
+    std::string& buff)
+{
+    ConnectionInfo* tracker_server = tracker_get_connection();
 
+    if (tracker_server == nullptr)
+    {
+        std::cerr << "[FastDFS] 获取 Tracker 连接失败"
+                  << std::endl;
+        return false;
+    }
+
+    char* file_buff = nullptr;
+    int64_t file_size = 0;
+
+    int ret = storage_download_file_to_buff1(
+        tracker_server,
+        nullptr,
+        file_id.c_str(),
+        &file_buff,
+        &file_size
+    );
+
+    tracker_close_connection(tracker_server);
+
+    // 使用 RAII 管理 SDK 分配的内存
+    std::unique_ptr<char, decltype(&std::free)> guard(
+        file_buff,
+        &std::free
+    );
+
+    if (ret != 0)
+    {
+        std::cerr << "[FastDFS] 文件下载失败: "
+                  << STRERROR(ret)
+                  << std::endl;
+        return false;
+    }
+
+    if (file_size < 0 ||
+        (file_size > 0 && file_buff == nullptr))
+    {
+        std::cerr << "[FastDFS] 下载数据异常"
+                  << std::endl;
+        return false;
+    }
+
+    std::string result;
+
+    if (file_size > 0)
+    {
+        result.assign(
+            file_buff,
+            static_cast<size_t>(file_size)
+        );
+    }
+
+    buff.swap(result);
+
+    return true;
+}
+bool FDFSClient::download_to_file(
+    const std::string& file_id,
+    const std::string& path)
+{
+
+    ConnectionInfo* tracker_server =
+        tracker_get_connection();
+
+    if (tracker_server == nullptr)
+    {
+        std::cerr << "获取 Tracker 连接失败"
+                  << std::endl;
+        return false;
+    }
+
+    int64_t file_size = 0;
+
+    int ret = storage_download_file_to_file1(tracker_server,
+        nullptr,
+        file_id.c_str(),
+        path.c_str(),
+        &file_size
+    );
+    tracker_close_connection(tracker_server);
+
+    if (ret != 0)
+    {
+        std::cerr
+            << "[FastDFS] 文件下载失败: "
+            << STRERROR(ret)
+            << std::endl;
+        return false;
+    }
+    std::cout << "[FastDFS] 文件下载成功，文件大小: " << file_size << " 字节" << std::endl;
+
+    return true;
+}
+bool FDFSClient::remove(const std::string& file_id)
+{
+
+    ConnectionInfo* tracker_server =
+        tracker_get_connection();
+
+    if (tracker_server == nullptr)
+    {
+        std::cerr << "[FastDFS] 获取 Tracker 连接失败"
+                  << std::endl;
+        return false;
+    }
+
+    int ret = storage_delete_file1(tracker_server,
+        nullptr,
+        file_id.c_str()
+    );
+
+    tracker_close_connection(tracker_server);
+
+    if (ret != 0)
+    {
+        std::cerr
+            << "[FastDFS] 文件删除失败: "
+            << STRERROR(ret)
+            << std::endl;
+        return false;
+    }
+    return true;
+}
 } // namespace bitefdfs
